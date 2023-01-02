@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Routes,Route, Link} from 'react-router-dom'
 import { Button } from "antd-mobile";
 import Home from './pages/Home'
 import CityList from './pages/CityList';
+import News from './pages/News';
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           </li>
         </ul>
         <Routes>
-          <Route path='/home' element={<Home/>}></Route>
+          <Route path='/home/*' element={<Home/>}>
+            <Route path='news' index element={<News/>}></Route>
+          </Route>
           <Route path='/citylist' element={<CityList/>}></Route>
         </Routes>
       </div>
