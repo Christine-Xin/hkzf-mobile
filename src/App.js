@@ -8,14 +8,6 @@ function App() {
   const routes= useRoutes(router)
   return (
       <div className="App">
-        <ul>
-          <li>
-            <Link to="/home">首页</Link>
-          </li>
-          <li>
-            <Link to="/citylist">城市选择</Link>
-          </li>
-        </ul>
         {routes}
       </div>
 
