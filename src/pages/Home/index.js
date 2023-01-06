@@ -1,4 +1,5 @@
 import React,{useState} from 'react'
+import {useNavigate,useLocation} from 'react-router-dom'
 import './index.css'
 import {
     Outlet
@@ -17,38 +18,49 @@ import {
 
 
 const Home = () => {
+    // 初始化路由
+    const navigateTo=useNavigate()
+    const location=useLocation()
+    const {pathname}=location
+
     const tabs = [{
-            key: 'home',
+            key: '/home/index',
             title: '首页',
             icon: < AppOutline /> ,
             badge: Badge.dot,
         },
         {
-            key: 'todo',
+            key: '/home/list',
             title: '找房',
             icon: < UnorderedListOutline /> ,
             badge: '5',
         },
         {
-            key: 'message',
+            key: '/home/news',
             title: '资讯',
             icon: (active) =>
                 active ? < MessageFill /> : < MessageOutline /> ,
             badge: '99+',
         },
         {
-            key: 'personalCenter',
+            key: '/home/profile',
             title: '我的',
             icon: < UserOutline /> ,
         },
     ]
-    const [activeKey, setActiveKey] = useState('todo')
+    console.log(pathname)
+    const [activeKey, setActiveKey] = useState(pathname); //刷新当前页，以当前路由路径为tabbar得初始页
+    const changeTabBar=(value)=>{
+        console.log(value,'change')
+        setActiveKey(value);
+        navigateTo(value)
+    }
     return ( 
         <div className='home'>
             {/* 渲染子路由 */ } 
             <Outlet /> 
             {/* tabBar */ }
-            <TabBar activeKey={activeKey} onChange={value=>setActiveKey(value)}>
+            <TabBar activeKey={activeKey} onChange={changeTabBar}>
                 {tabs.map((item) => (
                     <TabBar.Item key={item.key} icon={item.icon} title={item.title} badge={item.badge}></TabBar.Item>
                 ))}
