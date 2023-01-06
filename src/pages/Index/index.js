@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {Button,Space,Toast,Swiper, Image} from 'antd-mobile'
+import {Button,Space,Toast,Swiper, Image, Grid} from 'antd-mobile'
 import axios from 'axios'
-import './index'
+import './index.css'
+import Nav1 from '../../assets/images/nav-1.png'
+import Nav2 from '../../assets/images/nav-2.png'
+import Nav3 from '../../assets/images/nav-3.png'
+import Nav4 from '../../assets/images/nav-4.png'
 
 
 const Index=()=>{
-    const colors=['#ace0ff', '#bcffbd', '#e4fabd', '#ffcfac'];
 
     const [swipers,setSwipers]= useState([]);
 
@@ -19,6 +22,25 @@ const Index=()=>{
     useEffect(()=>{
         getSwipers()
     },[])
+
+    const navs= [
+        {
+           text:'整租',
+           imgsrc:Nav1,
+        },
+        {
+            text:'合租',
+            imgsrc:Nav2,
+        },
+        {
+            text:'地图找房',
+            imgsrc:Nav3,
+        },
+        {
+            text:'去出租',
+            imgsrc:Nav4,
+        }
+    ]
     return (
         <div>
             {/* 轮播图 */}
@@ -33,6 +55,19 @@ const Index=()=>{
                     ))
                 }
             </Swiper>
+            {/*  导航菜单*/}
+            <Grid columns={4} className="navs">
+                {
+                    navs.map((item,index)=>(
+                        <Grid.Item key={index} className="navItem">
+                            <Image src={item.imgsrc} width={40} height={40}/>
+                            <div>
+                                {item.text}
+                            </div>
+                        </Grid.Item>
+                    ))
+                }
+            </Grid>
         </div>
     )
 }
