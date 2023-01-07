@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import {Button,Space,Toast,Swiper, Image, Grid,List} from 'antd-mobile'
+import {Button,Space,Toast,Swiper, Image, Grid,List,Input} from 'antd-mobile'
+import { EnvironmentOutline,DownFill,SearchOutline} from 'antd-mobile-icons'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
-import './index.css'
+import './index.scss'
 import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
 import Nav3 from '../../assets/images/nav-3.png'
@@ -14,12 +15,12 @@ const Index=()=>{
     const [swipers,setSwipers]= useState([]);
     const [groups,setGroups] = useState([]);
     const [news,setNews]=useState([]); 
+    const [place,setPlace]=useState("");
 
     const navigate=useNavigate()
     // 获取轮播图
     const getSwipers=async ()=>{
         const res=await axios.get('http://localhost:8080/home/swiper')
-        console.log(res)
         if(res.data.status===200){
             setSwipers(res.data.body)
         }
@@ -31,7 +32,6 @@ const Index=()=>{
                 area:'AREA%7C88cff55c-aaa4-e2e0'
             }
         })
-        console.log(res)
         if(res.data.status===200){
             setGroups(res.data.body)
         }
@@ -79,23 +79,44 @@ const Index=()=>{
     ]
     // 渲染导航菜单
     const renderNavs=(val)=>{
-        console.log(val)
         navigate(val)
     }
     return (
         <div>
             {/* 轮播图 */}
-            <Swiper loop autoplay style={{height:150}}>
-                {
-                    swipers.map((item,index)=>(
-                        <Swiper.Item key={index}>
-                            <div style={{height:150}}>
-                                <Image src={'http://localhost:8080'+ item.imgSrc} fit='cover'></Image>
-                            </div>
-                        </Swiper.Item>
-                    ))
-                }
-            </Swiper>
+            <div className="swiperDiv">
+                <Swiper loop autoplay style={{height:150}}>
+                    {
+                        swipers.map((item,index)=>(
+                            <Swiper.Item key={index}>
+                                <div style={{height:150}}>
+                                    <Image src={'http://localhost:8080'+ item.imgSrc} fit='cover'></Image>
+                                </div>
+                            </Swiper.Item>
+                        ))
+                    }
+                </Swiper>
+                {/* 顶部导航 */}
+                <div className="searchDiv">
+                    <div className="search">
+                        <div className="location">
+                            <span>上海</span>
+                            <DownFill />
+                        </div>
+                        <div className="form">
+                            <SearchOutline />
+                            <Input
+                                placeholder='请输入小区或地址'
+                                value={place}
+                                clearable
+                                />
+                        </div>
+                    </div>
+                    <div className="icon">
+                        <EnvironmentOutline color='#fff'/>
+                    </div>
+                </div>
+            </div>
             {/*  导航菜单*/}
             <Grid columns={4} className="navs">
                 {

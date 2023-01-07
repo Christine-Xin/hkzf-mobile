@@ -45,3 +45,34 @@
     display: flex;
     justify-content: space-between;
 }
+.swiperDiv{
+    position: relative;
+    .searchDiv{
+        position: absolute;
+        top:10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 10px;
+        .search{
+            flex:1;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 8px;
+            .location{
+                width: 50px;
+                margin-right: 10px;
+                text-align: center;
+            }
+            .form{
+                display: flex;
+                align-items: center;
+                .adm-input-element{
+                    font-size: 13px;
+                }
+            }
+        }
+    }
+}
