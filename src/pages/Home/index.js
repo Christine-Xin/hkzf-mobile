@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import {useNavigate,useLocation} from 'react-router-dom'
 import './index.css'
 import {
@@ -17,7 +17,7 @@ import {
 } from 'antd-mobile-icons'
 
 
-const Home = () => {
+const Home = (props) => {
     // 初始化路由
     const navigateTo=useNavigate()
     const location=useLocation()
@@ -48,13 +48,17 @@ const Home = () => {
             icon: < UserOutline /> ,
         },
     ]
-    console.log(pathname)
     const [activeKey, setActiveKey] = useState(pathname); //刷新当前页，以当前路由路径为tabbar得初始页
     const changeTabBar=(value)=>{
         console.log(value,'change')
         setActiveKey(value);
         navigateTo(value)
     }
+    // 监听路由的变化
+    useEffect(()=>{
+        setActiveKey(pathname)
+    },[pathname])
+
     return ( 
         <div className='home'>
             {/* 渲染子路由 */ } 
