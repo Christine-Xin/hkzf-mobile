@@ -64,7 +64,7 @@ const Home = (props) => {
             {/* 渲染子路由 */ } 
             <Outlet /> 
             {/* tabBar */ }
-            <TabBar activeKey={activeKey} onChange={changeTabBar}>
+            <TabBar activeKey={activeKey} onChange={changeTabBar} className="footer">
                 {tabs.map((item) => (
                     <TabBar.Item key={item.key} icon={item.icon} title={item.title} badge={item.badge}></TabBar.Item>
                 ))}

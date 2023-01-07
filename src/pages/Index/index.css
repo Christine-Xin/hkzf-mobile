@@ -28,3 +28,20 @@
 .groupItem:nth-child(odd){
     margin-right: 5px;
 }
+.news{
+    padding: 10px;
+
+}
+.news .title{
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.news .newsItem .right .title{
+   font-size: 14px;
+}
+.news .newsItem .right .desc{
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+}

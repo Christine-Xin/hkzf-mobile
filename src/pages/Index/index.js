@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Button,Space,Toast,Swiper, Image, Grid} from 'antd-mobile'
+import {Button,Space,Toast,Swiper, Image, Grid,List} from 'antd-mobile'
 import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
 import './index.css'
@@ -12,7 +12,9 @@ import Nav4 from '../../assets/images/nav-4.png'
 const Index=()=>{
 
     const [swipers,setSwipers]= useState([]);
-    const [groups,setGroups] = useState([])
+    const [groups,setGroups] = useState([]);
+    const [news,setNews]=useState([]); 
+
     const navigate=useNavigate()
     // 获取轮播图
     const getSwipers=async ()=>{
@@ -34,10 +36,23 @@ const Index=()=>{
             setGroups(res.data.body)
         }
     }
+    // 获取最新资讯
+    const getNews= async ()=>{
+        const res= await axios.get('http://localhost:8080/home/news',{
+            params:{
+                area:'AREA|88cff55c-aaa4-e2e0'
+            }
+        })
+        console.log(res)
+        if(res.data.status===200){
+            setNews(res.data.body)
+        }
+    }
     // 组件首次渲染时请求
     useEffect(()=>{
         getSwipers();
         getGroups();
+        getNews();
     },[])
 
     const navs= [
@@ -113,6 +128,31 @@ const Index=()=>{
                     ))
                 }
             </Grid>
+            </div>
+            {/* 最新资讯 */}
+            <div className="news">
+                <div className="title">
+                    最新资讯
+                </div>
+                <List>
+                    {
+                        news.map((item)=>(
+                            <List.Item key={item.id} className="newsItem"
+                                prefix={
+                                    <Image src={`http://localhost:8080${item.imgSrc}`} width={50} height={50} fit='cover'></Image>
+                                }
+                            >
+                                <div  className="right">
+                                   <div className="title">{item.title}</div> 
+                                   <div className="desc">
+                                        <span>{item.from}</span>
+                                        <span>{item.date}</span>
+                                   </div>
+                                </div>
+                            </List.Item>
+                        ))
+                    }
+                </List>
             </div>
             
         </div>
