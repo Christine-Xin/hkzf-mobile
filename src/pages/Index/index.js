@@ -12,8 +12,9 @@ import Nav4 from '../../assets/images/nav-4.png'
 const Index=()=>{
 
     const [swipers,setSwipers]= useState([]);
+    const [groups,setGroups] = useState([])
     const navigate=useNavigate()
-
+    // 获取轮播图
     const getSwipers=async ()=>{
         const res=await axios.get('http://localhost:8080/home/swiper')
         console.log(res)
@@ -21,8 +22,22 @@ const Index=()=>{
             setSwipers(res.data.body)
         }
     }
+    // 获取租房小组
+    const getGroups=async()=>{
+        const res= await axios.get('http://localhost:8080/home/groups',{
+            params:{
+                area:'AREA%7C88cff55c-aaa4-e2e0'
+            }
+        })
+        console.log(res)
+        if(res.data.status===200){
+            setGroups(res.data.body)
+        }
+    }
+    // 组件首次渲染时请求
     useEffect(()=>{
-        getSwipers()
+        getSwipers();
+        getGroups();
     },[])
 
     const navs= [
@@ -79,6 +94,27 @@ const Index=()=>{
                     ))
                 }
             </Grid>
+            {/* 租房小组 */}
+            <div className="groups">
+                <div className="title">
+                    <div>租房小组</div>
+                    <div className="more">更多</div>
+                </div>
+                <Grid columns={2}>
+                {
+                    groups.map((item)=>(
+                        <Grid.Item key={item.id} className="groupItem">
+                            <div>
+                                <h3>{item.title}</h3>
+                                <p>{item.desc}</p>
+                            </div>
+                            <Image src={`http://localhost:8080${item.imgSrc}`} width={40} height={40}/>
+                        </Grid.Item>
+                    ))
+                }
+            </Grid>
+            </div>
+            
         </div>
     )
 }
