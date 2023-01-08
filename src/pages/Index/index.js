@@ -16,6 +16,7 @@ const Index=()=>{
     const [groups,setGroups] = useState([]);
     const [news,setNews]=useState([]); 
     const [place,setPlace]=useState("");
+    const [curCityName,setCurCityName]= useState("");
 
     const navigate=useNavigate()
     // 获取轮播图
@@ -53,6 +54,8 @@ const Index=()=>{
         getSwipers();
         getGroups();
         getNews();
+        // 通过ip定位获取当前城市名称
+        getCurCity();
     },[])
 
     const navs= [
@@ -85,6 +88,16 @@ const Index=()=>{
     const toCityList=()=>{
         navigate('/citylist')
     }
+    // 获取当前定位的城市信息
+    const getCurCity=()=>{
+        const curCity=new window.BMapGL.LocalCity();
+        curCity.get(async res=>{
+            console.log(res)
+            const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`)
+            console.log(result)
+            setCurCityName(result.data.body.label)
+        })
+    }
     return (
         <div>
             {/* 轮播图 */}
@@ -104,7 +117,7 @@ const Index=()=>{
                 <div className="searchDiv">
                     <div className="search">
                         <div className="location" onClick={()=>toCityList()}>
-                            <span>上海</span>
+                            <span>{curCityName}</span>
                             <DownFill fontSize={10}/>
                         </div>
                         <div className="form" onClick={()=>navigate('/search')}>
