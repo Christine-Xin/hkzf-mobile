@@ -5,6 +5,7 @@ import News from '../pages/News';
 import Profile from '../pages/Profile';
 import Index from '../pages/Index';
 import HouseList from '../pages/HouseList';
+import Map from '../pages/Map';
 
 const baseRouter=[
     {
@@ -36,6 +37,10 @@ const baseRouter=[
     {
         path:"/citylist",
         element:<CityList/>
+    },
+    {
+        path:"/map",
+        element :<Map/>
     }
 ]
 
