@@ -81,6 +81,10 @@ const Index=()=>{
     const renderNavs=(val)=>{
         navigate(val)
     }
+    // 跳转到城市选择列表
+    const toCityList=()=>{
+        navigate('/citylist')
+    }
     return (
         <div>
             {/* 轮播图 */}
@@ -99,11 +103,11 @@ const Index=()=>{
                 {/* 顶部导航 */}
                 <div className="searchDiv">
                     <div className="search">
-                        <div className="location">
+                        <div className="location" onClick={()=>toCityList()}>
                             <span>上海</span>
-                            <DownFill />
+                            <DownFill fontSize={10}/>
                         </div>
-                        <div className="form">
+                        <div className="form" onClick={()=>navigate('/search')}>
                             <SearchOutline />
                             <Input
                                 placeholder='请输入小区或地址'
@@ -112,7 +116,7 @@ const Index=()=>{
                                 />
                         </div>
                     </div>
-                    <div className="icon">
+                    <div className="icon" onClick={()=>navigate('/map')}>
                         <EnvironmentOutline color='#fff'/>
                     </div>
                 </div>
