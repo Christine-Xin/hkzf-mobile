@@ -4,6 +4,7 @@ import './index.scss'
 import {createBrowserHistory} from 'history'
 import axios from 'axios'
 import {getCurrentCity} from '../../utils/index'
+import List from 'react-virtualized/dist/commonjs/List';
 
 
 const CityList=()=>{
@@ -60,9 +61,34 @@ const CityList=()=>{
             cityIndex,
         }
     }
+    // List data as an array of strings
+    const list = [
+            'Brian Vaughn',
+    ];
+    function rowRenderer({
+        key, // Unique key within array of rows
+        index, // 索引号
+        isScrolling, // 当前项是否在滚动中
+        isVisible, // 当前项是否可见
+        style, // 样式对象
+      }) {
+        return (
+          <div key={key} style={style}>
+            {list[index]}
+          </div>
+        );
+      }
     return (
         <div className='citylist'>
             <NavBar onBack={goBack}>城市选择</NavBar>
+            {/* 城市列表 */}
+            <List
+                width={300}
+                height={300}
+                rowCount={list.length}
+                rowHeight={20}
+                rowRenderer={rowRenderer}
+            />,
         </div>
     )
 }
