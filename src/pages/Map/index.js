@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import './index.scss';
+import NavHeader from "../../components/NavHeader";
 
 const Map=()=>{
     useEffect(()=>{
@@ -16,6 +17,7 @@ const Map=()=>{
     }
     return (
         <div className="map">
+            <NavHeader title="地图找房"/>
             <div id="container">
 
             </div>
