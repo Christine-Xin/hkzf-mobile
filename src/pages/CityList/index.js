@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState ,useRef} from 'react'
 import {NavBar} from 'antd-mobile'
 import './index.scss'
 import {createBrowserHistory} from 'history'
@@ -14,6 +14,7 @@ const CityList=()=>{
     const [indexActive,setIndexActive]=useState("#");
     const TITLE_HEIGHT = 36 // 索引（A,B等）的高度
     const NAME_HEIGHT = 50 // 每个城市名称的高度
+    const listRef=useRef()
     // 初始化history
     const history = createBrowserHistory({window})
     const goBack=()=>{
@@ -21,7 +22,8 @@ const CityList=()=>{
     }
     // 组件首次渲染时
     useEffect(()=>{
-        getCityList()
+        getCityList();
+        
     },[])
     // 获取城市列表数据
     const getCityList=async ()=>{
@@ -41,7 +43,9 @@ const CityList=()=>{
         console.log(cityList,cityIndex,curCity)
         
         setCityArr(cityList)
-        setCityIndexArr(cityIndex)
+        setCityIndexArr(cityIndex);
+        // 调用measureAllRows提前计算list中每一行的高度；实现scrollToRow的精确跳转
+        listRef.current.measureAllRows()
     }
     // 城市数据格式化
     /**
@@ -117,8 +121,17 @@ const CityList=()=>{
        * 修改list组件的rowheighr函数，动态计算每一行的高度（因为每一行高度不同）
        */
     //   获取当前索引
-    const getActiveIndex=(val)=>{
+    const getActiveIndex=(val,index)=>{
+        console.log(listRef,index)
         setIndexActive(val); // 设置当前字母索引
+        listRef.current.scrollToRow(index); //将list组件置顶
+    }
+    // 用于获取list组件中渲染的行信息
+    const onRowsRendered=({startIndex})=>{
+        const letter= cityIndexArr[startIndex]
+        if(letter!==indexActive){
+            setIndexActive(letter)
+        }
     }
     return (
         <div className='citylist'>
@@ -127,19 +140,22 @@ const CityList=()=>{
             <AutoSizer>
                 {({height,width})=>(
                     <List
+                        ref={listRef}
                         width={width}
                         height={height}
                         rowCount={cityIndexArr.length}
+                        scrollToAlignment="start"
                         rowHeight={getRowHeight}
                         rowRenderer={rowRenderer}
+                        onRowsRendered={onRowsRendered}
                     />
                 )}
             </AutoSizer>
             {/* 右侧索引列表 */}
             <ul className='city-index'>
                 {
-                    cityIndexArr.map(item=>(
-                        <li className='city-index-item' key={item} onClick={()=>getActiveIndex(item)}>
+                    cityIndexArr.map((item,index)=>(
+                        <li className='city-index-item' key={item} onClick={()=>getActiveIndex(item,index)}>
                             <span className={indexActive===item?'index-active':''}>{item==='hot'?'热':item==='#'?'#':item.toUpperCase()}</span>
                         </li>
                     ))
