@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {NavBar} from 'antd-mobile'
 import './index.scss'
 import {createBrowserHistory} from 'history'
 import axios from 'axios'
 import {getCurrentCity} from '../../utils/index'
-import List from 'react-virtualized/dist/commonjs/List';
+// import List from 'react-virtualized/dist/commonjs/List';
+import {AutoSizer, List} from 'react-virtualized';
 
 
 const CityList=()=>{
+    const [cityArr, setCityArr]=useState({});
+    const [cityIndexArr, setCityIndexArr]=useState([]);
+    const [indexActive,setIndexActive]=useState("#");
+    const TITLE_HEIGHT = 36 // 索引（A,B等）的高度
+    const NAME_HEIGHT = 50 // 每个城市名称的高度
     // 初始化history
     const history = createBrowserHistory({window})
     const goBack=()=>{
@@ -20,19 +26,22 @@ const CityList=()=>{
     // 获取城市列表数据
     const getCityList=async ()=>{
         const res= await axios.get('http://localhost:8080/area/city?level=1')
-        console.log(res)
         let {cityList,cityIndex}=formatCityData(res.data.body)
         // 获取热门城市数据
         const hotRes= await axios.get('http://localhost:8080/area/hot')
         if(hotRes.data.status===200){
-            cityList['hot']=res.data.body
+            cityList['hot']=hotRes.data.body
             cityIndex.unshift('hot')
         }
         // 获取当前城市
         const curCity=await getCurrentCity()
         cityList['#']=[curCity]
         cityIndex.unshift('#')
+
         console.log(cityList,cityIndex,curCity)
+        
+        setCityArr(cityList)
+        setCityIndexArr(cityIndex)
     }
     // 城市数据格式化
     /**
@@ -61,34 +70,82 @@ const CityList=()=>{
             cityIndex,
         }
     }
-    // List data as an array of strings
-    const list = [
-            'Brian Vaughn',
-    ];
-    function rowRenderer({
+    // 格式化城市字母索引
+    const formatCityIndex=(letter)=>{
+        switch(letter){
+            case '#':
+                return '当前定位';
+            case 'hot':
+                return '热门城市';
+            default:
+                return letter.toUpperCase();
+        }
+    }
+    // 动态获取每一行高度:标题索引高度+城市数量*城市名称的高度
+    const getRowHeight=({index})=>{
+        const letter= cityIndexArr[index]
+        const nameLength=cityArr[letter].length
+        return TITLE_HEIGHT + NAME_HEIGHT * nameLength
+    }
+    const rowRenderer=({
         key, // Unique key within array of rows
         index, // 索引号
         isScrolling, // 当前项是否在滚动中
         isVisible, // 当前项是否可见
         style, // 样式对象
-      }) {
+      }) =>{
+        // 获取每一行的字母索引
+        const letter= cityIndexArr[index]
         return (
-          <div key={key} style={style}>
-            {list[index]}
+          <div key={key} style={style} className="city">
+            <div className='title'>{formatCityIndex(letter)}</div>
+            {
+                cityArr[letter].map((item)=>(
+                    <div className='name' key={item.value}>{item.label}</div>
+                ))
+            }
+            
           </div>
         );
       }
+      /**
+       * 将获取到的citylist和cityindex添加为组件得状态
+       * 修改list组件得rowCount为citylist数组得长度
+       * 将rowRender函数，添加到组件中，以便在函数中获取状态数据citylist和cityindex
+       * 修改list组件得rowrender为组件中的rowrender方法
+       * 修改rowrendder方法中渲染每行结构和样式
+       * 修改list组件的rowheighr函数，动态计算每一行的高度（因为每一行高度不同）
+       */
+    //   获取当前索引
+    const getActiveIndex=(val)=>{
+        setIndexActive(val); // 设置当前字母索引
+    }
     return (
         <div className='citylist'>
             <NavBar onBack={goBack}>城市选择</NavBar>
             {/* 城市列表 */}
-            <List
-                width={300}
-                height={300}
-                rowCount={list.length}
-                rowHeight={20}
-                rowRenderer={rowRenderer}
-            />,
+            <AutoSizer>
+                {({height,width})=>(
+                    <List
+                        width={width}
+                        height={height}
+                        rowCount={cityIndexArr.length}
+                        rowHeight={getRowHeight}
+                        rowRenderer={rowRenderer}
+                    />
+                )}
+            </AutoSizer>
+            {/* 右侧索引列表 */}
+            <ul className='city-index'>
+                {
+                    cityIndexArr.map(item=>(
+                        <li className='city-index-item' key={item} onClick={()=>getActiveIndex(item)}>
+                            <span className={indexActive===item?'index-active':''}>{item==='hot'?'热':item==='#'?'#':item.toUpperCase()}</span>
+                        </li>
+                    ))
+                }
+                
+            </ul>
         </div>
     )
 }
