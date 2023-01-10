@@ -1,5 +1,5 @@
 import React, { useEffect, useState ,useRef} from 'react'
-import {NavBar} from 'antd-mobile'
+import {NavBar,Toast} from 'antd-mobile'
 import './index.scss'
 import {createBrowserHistory} from 'history'
 import axios from 'axios'
@@ -15,6 +15,7 @@ const CityList=()=>{
     const TITLE_HEIGHT = 36 // 索引（A,B等）的高度
     const NAME_HEIGHT = 50 // 每个城市名称的高度
     const listRef=useRef()
+    const HOUSE_CITY= ['北京','上海','广州','深圳']
     // 初始化history
     const history = createBrowserHistory({window})
     const goBack=()=>{
@@ -105,13 +106,25 @@ const CityList=()=>{
             <div className='title'>{formatCityIndex(letter)}</div>
             {
                 cityArr[letter].map((item)=>(
-                    <div className='name' key={item.value}>{item.label}</div>
+                    <div className='name' key={item.value} onClick={()=>changeCity(item)}>{item.label}</div>
                 ))
             }
             
           </div>
         );
       }
+    //   切换城市
+    const changeCity=({label,value})=>{
+        
+        if(HOUSE_CITY.indexOf(label)>-1){
+            localStorage.setItem("hkzf_city", JSON.stringify({label,value}));
+            goBack()
+        }else{
+            Toast.show({
+                content: '该城市无房源信息',
+              })
+        }
+    }
       /**
        * 将获取到的citylist和cityindex添加为组件得状态
        * 修改list组件得rowCount为citylist数组得长度

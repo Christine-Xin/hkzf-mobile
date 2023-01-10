@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {Button,Space,Toast,Swiper, Image, Grid,List,Input} from 'antd-mobile'
 import { EnvironmentOutline,DownFill,SearchOutline} from 'antd-mobile-icons'
 import axios from 'axios'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate,useLocation} from 'react-router-dom'
 import './index.scss'
 import Nav1 from '../../assets/images/nav-1.png'
 import Nav2 from '../../assets/images/nav-2.png'
@@ -91,6 +91,11 @@ const Index=()=>{
     // 获取当前定位的城市信息
     const getCurCity=()=>{
         const curCity=new window.BMapGL.LocalCity();
+        const localstorageCity=JSON.parse(localStorage.getItem('hkzf_city')).label
+        if(localstorageCity){
+            setCurCityName(localstorageCity)
+            return
+        }
         curCity.get(async res=>{
             console.log(res)
             const result = await axios.get(`http://localhost:8080/area/info?name=${res.name}`)
