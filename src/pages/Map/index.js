@@ -57,18 +57,24 @@ const Map=()=>{
                 // })
                 // map.addOverlay(label)
                 const res= await axios.get(`http://localhost:8080/area/map?id=${value}`)
+                console.log('获取房源信息',res)
                 res.data.body.forEach(item=>{
-                    const {coord:{latitude,longitude}, label:areaName,count}=item
-                    const label= new window.BMapGL.Label('文本覆盖物',{
-                        position:new window.BMapGL.Point(latitude,longitude),
+                   
+                    const {coord:{latitude,longitude}, label:areaName,count, value}=item
+                    const areaPoint=new window.BMapGL.Point(longitude,latitude)
+
+                    const label= new window.BMapGL.Label('',{
+                        position:areaPoint,
                         offset: new window.BMapGL.Size(-35,-35), //设置覆盖物中心点偏移
                     })
+                    console.log(123,latitude,longitude,areaName,count)
                     label.setContent(`
                         <div class="${styles.bubble}">
                             <p class="${styles.name}">${areaName}</p>
                             <p>${count}套</p>
                         </div>
                     `)
+                    label.id=value
                     label.setStyle({
                         cursor:'pointer',
                         border:'0px solid rgb(255,0,0)',
@@ -79,7 +85,11 @@ const Map=()=>{
                         textAlign:'center'
                     })
                     label.addEventListener('click',()=>{
-                        console.log('房源')
+                        console.log('房源',label.id)
+                        // 放大地图，以当前点击得覆盖物为中心放大
+                        map.centerAndZoom(areaPoint,13)
+                        // 清除当前覆盖物
+                        map.clearOverlays()
                     })
                     map.addOverlay(label)
                 })
