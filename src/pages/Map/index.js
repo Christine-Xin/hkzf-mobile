@@ -5,6 +5,7 @@ import styles from "./index.module.css"
 import axios from "axios";
 import {Link,useNavigate} from "react-router-dom"
 import HouseItem from "../../components/HouseItem";
+import { Toast } from 'antd-mobile'
 
 const Map=()=>{
     // 获取当前城市
@@ -24,12 +25,24 @@ const Map=()=>{
      * 
      */
     const renderOverlays=async (id)=>{
-        const res=await axios.get(`http://localhost:8080/area/map?id=${id}`)
-        const data=res.data.body
-        const {nextZoom, type}=getTypeAndZoom()
-        data.forEach(item=>{
-            createOverlays(item,nextZoom, type)
-        })
+        try{
+             // 开启loading
+            Toast.show({
+                icon: 'loading',
+                duration: 0,
+                content: '加载中…',
+            })
+            const res=await axios.get(`http://localhost:8080/area/map?id=${id}`)
+            Toast.clear(); //关闭loading
+            const data=res.data.body
+            const {nextZoom, type}=getTypeAndZoom()
+            data.forEach(item=>{
+                createOverlays(item,nextZoom, type)
+            })
+        }catch(e){
+            Toast.clear(); //关闭loading
+        }
+       
     }
     /**
      * 计算要绘制得覆盖物类型和下一个缩放级别
@@ -119,8 +132,14 @@ const Map=()=>{
             color:'rgb(255,255,255)',
             textAlign:'center'
         })
-        label.addEventListener('click',()=>{
-            console.log('房源',label.id)
+        label.addEventListener('click',(e)=>{
+            console.log('房源',label.id,e)
+            const target=e.domEvent.changedTouches[0]
+            map.panBy(
+                window.innerWidth / 2 - target.clientX,
+                (window.innerHeight - 330 )/2 -target.clientY
+            )
+
             getHouseList(label.id)
             
         })
@@ -128,9 +147,21 @@ const Map=()=>{
     }
     // 获取小区房源数据
     const getHouseList=async (id)=>{
-        const res= await axios.get(`http://localhost:8080/houses?cityId=${id}`)
-        setHouseList(res.data.body.list)
-        setIsShowList(true)
+        try{
+             // 开启loading
+            Toast.show({
+                icon: 'loading',
+                duration: 0,
+                content: '加载中…',
+            })
+            const res= await axios.get(`http://localhost:8080/houses?cityId=${id}`)
+            Toast.clear(); //关闭loading
+            setHouseList(res.data.body.list)
+            setIsShowList(true)
+        }catch(e){
+            Toast.clear(); //关闭loading
+        }
+       
 
     }
     const renderHouseList=()=>{
@@ -231,6 +262,11 @@ const Map=()=>{
                 alert('您选择的地址没有解析到结果！');
             }
         }, label)
+        // 给地图绑定移动事件
+        map.addEventListener('movestart',()=>{
+            console.log('movestart')
+            setIsShowList(false)
+        })
     }
     return (
         <div className="map">
